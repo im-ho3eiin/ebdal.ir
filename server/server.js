@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import dotenv from 'dotenv';
 import pool from './src/config/db.js';
+import productRoutes from './src/routes/productRoutes.js';
 
 dotenv.config();
 
@@ -16,20 +17,19 @@ app.use(compression()); // فشرده‌سازی خودکار پاسخ‌ها ج
 app.use(cors({ origin: 'http://localhost:5173' })); // پورت پیش‌فرض Vite
 app.use(express.json());
 
-// روت تست و سلامت سیستم و دیتابیس
+// ثبت مسیرهای API پروژه
+app.use('/api', productRoutes);
+
+// مسیر تست سلامت
 app.get('/api/health', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
-    res.json({
-      status: 'success',
-      message: 'بک‌اند تأسیسات ابدال فعال است',
-      db_time: result.rows[0].now,
-    });
+    res.json({ status: 'success', message: 'بک‌اند فعال است', db_time: result.rows[0].now });
   } catch (error) {
-    res.status(500).json({ status: 'error', message: 'خطا در برقراری ارتباط با دیتابیس', details: error.message });
+    res.status(500).json({ status: 'error', message: 'خطا در دیتابیس', details: error.message });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 سرور تأسیسات ابدال روی پورت ${PORT} با موفقیت روشن شد.`);
+  console.log(`🚀 سرور تاسیسات ابدال روی پورت ${PORT} روشن شد.`);
 });
