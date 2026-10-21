@@ -1,9 +1,12 @@
-import { Router } from 'express';
-import { getProducts, getCategories } from '../controllers/productController.js';
+import express from 'express';
+import { getProducts, getProductBySlug } from '../controllers/productController.js';
 
-const router = Router();
+const router = express.Router();
 
-router.get('/products', getProducts);
-router.get('/categories', getCategories);
+// دریافت لیست تمام محصولات
+router.get('/', getProducts);
+
+// دریافت جزئیات یک محصول با اسلاگ
+router.get('/:slug', getProductBySlug);
 
 export default router;

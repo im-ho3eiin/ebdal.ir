@@ -1,35 +1,35 @@
 import express from 'express';
+import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-import dotenv from 'dotenv';
-import pool from './src/config/db.js';
 import productRoutes from './src/routes/productRoutes.js';
+import pool from './src/config/db.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// میدل‌ورهای بهینه‌سازی و امنیت
+// Middleware‌های پایه و بهینه‌سازی
 app.use(helmet());
-app.use(compression()); // فشرده‌سازی خودکار پاسخ‌ها جهت کاهش پهنای باند هاست
-app.use(cors({ origin: 'http://localhost:5173' })); // پورت پیش‌فرض Vite
+app.use(compression());
+app.use(cors());
 app.use(express.json());
 
-// ثبت مسیرهای API پروژه
-app.use('/api', productRoutes);
+// ۱. روت تست سلامت سرور (باید اول باشد)
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Ebdal API is healthy and running' });
+});
 
-// مسیر تست سلامت
-app.get('/api/health', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT NOW()');
-    res.json({ status: 'success', message: 'بک‌اند فعال است', db_time: result.rows[0].now });
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: 'خطا در دیتابیس', details: error.message });
-  }
+// ۲. روت‌های محصولات
+app.use('/api/products', productRoutes);
+
+// هندلر خطای ۴۰۴ کلی سرور
+app.use((req, res) => {
+  res.status(404).json({ status: 'fail', message: 'مسیر مورد نظر یافت نشد' });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 سرور تاسیسات ابدال روی پورت ${PORT} روشن شد.`);
+  console.log(`Server is running on port ${PORT}`);
 });
