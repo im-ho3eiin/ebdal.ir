@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Vazirmatn", system-ui, sans-serif;
+  --color-brand: #1d4ba3;
+  --color-brand-dark: #143a82;
+  --color-brand-light: #e8f0fd;
+  --color-ink: #121a2e;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  background: linear-gradient(180deg, #ffffff 0%, #eef4ff 45%, #ffffff 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
